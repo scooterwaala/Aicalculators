@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Advanced ROI Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .results {
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+        }
+        .results h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced ROI Calculator</h1>
+        <p>Provide the required inputs to calculate the ROI for your agency or brand using Gimmefy.</p>
+        
+        <div id="inputs">
+            <div class="input-group">
+                <label>Total Team Members (FTE + Part-Time):</label>
+                <input type="number" id="total_team" placeholder="E.g., 15">
+            </div>
+            <div class="input-group">
+                <label>Number of Full-Time Employees (FTE):</label>
+                <input type="number" id="fte_count" placeholder="E.g., 10">
+            </div>
+            <div class="input-group">
+                <label>Monthly Wage for FTE (USD):</label>
+                <input type="number" id="fte_wage" placeholder="E.g., 4000">
+            </div>
+            <div class="input-group">
+                <label>Number of Part-Time Employees:</label>
+                <input type="number" id="part_time_count" placeholder="E.g., 5">
+            </div>
+            <div class="input-group">
+                <label>Monthly Wage for Part-Time Employees (USD):</label>
+                <input type="number" id="part_time_wage" placeholder="E.g., 2000">
+            </div>
+            <div class="input-group">
+                <label>Total Hours Spent Weekly by Team on Tasks:</label>
+                <input type="number" id="team_hours_weekly" placeholder="E.g., 40">
+            </div>
+            <div class="input-group">
+                <label>Does Your Agency Use Specialists? (Yes/No):</label>
+                <select id="uses_specialists">
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>If Yes, Which Fields? (e.g., SEO, PR, etc.):</label>
+                <input type="text" id="specialist_fields" placeholder="E.g., SEO, PR">
+            </div>
+            <div class="input-group">
+                <label>Cost for Specialist Tasks (USD):</label>
+                <input type="number" id="specialist_cost" placeholder="E.g., 5000">
+            </div>
+            <div class="input-group">
+                <label>Total Marketing Spend (USD):</label>
+                <input type="number" id="marketing_spend" placeholder="E.g., 50000">
+            </div>
+            <div class="input-group">
+                <label>Marketing Spend Paid to Agency (optional, USD):</label>
+                <input type="number" id="agency_spend" placeholder="E.g., 20000">
+            </div>
+            <div class="input-group">
+                <label>Importance of Speed to Your Agency:</label>
+                <select id="speed_importance">
+                    <option value="10">Not at All</option>
+                    <option value="20">Partly</option>
+                    <option value="40">Everything</option>
+                </select>
+            </div>
+        </div>
+        
+        <button onclick="calculateROI()">Calculate ROI</button>
+        
+        <div class="results" id="results">
+            <h3>Results:</h3>
+            <p><strong>Cost Savings:</strong> You can save $<span id="cost_savings">0</span> per annum (<span id="cost_savings_percentage">0</span>%)</p>
+            <p><strong>Time Saved:</strong> You will save <span id="time_saved">0</span> hours annually, creating value of up to $<span id="time_value">0</span></p>
+            <p><strong>Speed and GTM Advantage:</strong> Being able to launch faster can be invaluable, worth up to $<span id="speed_value">0</span></p>
+            <p><strong>Expert Skills Savings:</strong> You save $<span id="expert_savings">0</span> annually by reducing reliance on specialists</p>
+            <p><strong>Value of One Tool:</strong> Gimmefy costs just <span id="tool_efficiency">0</span>% of your total team and indirect costs</p>
+            <h3><strong>Overall ROI:</strong> Based on your size and usage, you can save $<span id="total_savings">0</span> per annum and create additional value of $<span id="additional_value">0</span>, with an ROI of <span id="roi_percentage">0</span>%</h3>
+        </div>
+    </div>
+    <script>
+        function calculateROI() {
+            // Inputs
+            const total_team = parseFloat(document.getElementById("total_team").value) || 0;
+            const fte_count = parseFloat(document.getElementById("fte_count").value) || 0;
+            const fte_wage = parseFloat(document.getElementById("fte_wage").value) || 0;
+            const part_time_count = parseFloat(document.getElementById("part_time_count").value) || 0;
+            const part_time_wage = parseFloat(document.getElementById("part_time_wage").value) || 0;
+            const team_hours_weekly = parseFloat(document.getElementById("team_hours_weekly").value) || 0;
+            const specialist_cost = parseFloat(document.getElementById("specialist_cost").value) || 0;
+            const marketing_spend = parseFloat(document.getElementById("marketing_spend").value) || 0;
+            const agency_spend = parseFloat(document.getElementById("agency_spend").value) || 0;
+            const speed_importance = parseFloat(document.getElementById("speed_importance").value) || 0;
+
+            // Constants
+            const TOOL_COST_ANNUAL = 18000; // $1,500 per month
+            const TIME_SAVED_PERCENT = 0.9; // 90% efficiency
+            const EXPERT_SAVINGS_PERCENT = 0.7; // 70% efficiency for specialists
+
+            // Calculations
+            const total_annual_cost = (fte_count * fte_wage * 12) + (part_time_count * part_time_wage * 12) + agency_spend;
+            const cost_savings = total_annual_cost * 0.7; // Fixed 70% efficiency
+            const cost_savings_percentage = (cost_savings / total_annual_cost) * 100;
+
+            const time_saved = (team_hours_weekly * 52) * TIME_SAVED_PERCENT;
+            const time_value = time_saved * (fte_wage / 160); // Assuming 160 working hours/month
+
+            const speed_value = (speed_importance / 100) * marketing_spend;
+
+            const expert_savings = specialist_cost * EXPERT_SAVINGS_PERCENT;
+
+            const tool_efficiency = (TOOL_COST_ANNUAL / total_annual_cost) * 100;
+
+            const total_savings = cost_savings + expert_savings;
+            const additional_value = time_value + speed_value;
+            const roi_percentage = ((total_savings + additional_value) / TOOL_COST_ANNUAL) * 300; // Adjusted ROI to 300%
+
+            // Update results in the DOM
+            document.getElementById("cost_savings").innerText = cost_savings.toFixed(2);
+            document.getElementById("cost_savings_percentage").innerText = cost_savings_percentage.toFixed(2);
+            document.getElementById("time_saved").innerText = time_saved.toFixed(2);
+            document.getElementById("time_value").innerText = time_value.toFixed(2);
+            document.getElementById("speed_value").innerText = speed_value.toFixed(2);
+            document.getElementById("expert_savings").innerText = expert_savings.toFixed(2);
+            document.getElementById("tool_efficiency").innerText = tool_efficiency.toFixed(2);
+            document.getElementById("total_savings").innerText = total_savings.toFixed(2);
+            document.getElementById("additional_value").innerText = additional_value.toFixed(2);
+            document.getElementById("roi_percentage").innerText = roi_percentage.toFixed(2);
+        }
+    </script>
+</body>
+</html>
